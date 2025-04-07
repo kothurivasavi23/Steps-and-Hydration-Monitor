@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BMI Calculator with Workout Suggestions</title>
+    <style>
+        body {
+            background: url('water.jpg') no-repeat center center/cover;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            margin: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 350px;
+        }
+        input, button, select {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        #result {
+            margin-top: 15px;
+            font-weight: bold;
+            text-align: left;
+        }
+        .exercise-container {
+            margin-top: 20px;
+            display: none;
+            text-align: left;
+        }
+        iframe {
+            width: 100%;
+            height: 200px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>BMI Calculator</h2>
+        <form id="bmiForm" onsubmit="calculateBMI(event)">
+            <input type="text" id="bmiUsername" placeholder="Username" required>
+            <input type="number" id="height" placeholder="Height (cm)" required>
+            <input type="number" id="weight" placeholder="Weight (kg)" required>
+            <button type="submit">Calculate BMI</button>
+        </form>
+        <div id="result"></div>
+
+        <div id="exerciseContainer" class="exercise-container">
+            <h3>Recommended Workout</h3>
+            <p id="exerciseSuggestion"></p>
+            <label for="platform">Choose Video Platform:</label>
+            <select id="platform" onchange="updateVideo()">
+                <option value="youtube">YouTube</option>
+                <option value="vimeo">Vimeo</option>
+                <option value="dailymotion">Dailymotion</option>
+            </select>
+            <iframe id="exerciseVideo" allowfullscreen></iframe>
+        </div>
+    </div>
+
+    <script>
+        function calculateBMI(event) {
+            event.preventDefault();
+            const username = document.getElementById("bmiUsername").value;
+            const height = parseFloat(document.getElementById("height").value) / 100;
+            const weight = parseFloat(document.getElementById("weight").value);
+            const bmi = (weight / (height * height)).toFixed(2);
+
+            let category = "", steps = "", diet = "", workout = "", videoID = "", vimeoID = "", dailyID = "";
+
+            if (bmi < 18.5) {
+                category = "Underweight";
+                steps = "8,000 - 10,000 steps/day";
+                diet = "Increase calorie intake with healthy fats and proteins.";
+                workout = "Strength training (weights, push-ups, squats) to gain muscle mass.";
+                videoID = "kHuNGj3f4LE"; // YouTube ID
+                vimeoID = "76979871"; // Vimeo ID
+                dailyID = "x7yn12b"; // Dailymotion ID
+            } else if (bmi >= 18.5 && bmi < 24.9) {
+                category = "Normal weight";
+                steps = "10,000 steps/day";
+                diet = "Maintain a balanced diet with protein, carbs, and vitamins.";
+                workout = "A mix of strength training, cardio, and flexibility exercises.";
+                videoID = "YvrKIQ_Tbsk";
+                vimeoID = "235213691";
+                dailyID = "x7yn18c";
+            } else if (bmi >= 25 && bmi < 29.9) {
+                category = "Overweight";
+                steps = "10,000 - 12,000 steps/day";
+                diet = "Focus on high-protein, fiber-rich, and low-carb meals.";
+                workout = "High-intensity interval training (HIIT) and cardio exercises.";
+                videoID = "PwXUHMKamP8";
+                vimeoID = "224856869";
+                dailyID = "x7yn1hj";
+            } else {
+                category = "Obese";
+                steps = "12,000 - 15,000 steps/day";
+                diet = "Avoid sugar, increase fiber intake, and drink more water.";
+                workout = "Low-impact exercises like walking, swimming, and cycling.";
+                videoID = "7Q_ycoYI2_U";
+                vimeoID = "180613917";
+                dailyID = "x7yn1jk";
+            }
+
+            // Display results
+            document.getElementById("result").innerHTML = `
+                <p><strong>${username}'s BMI:</strong> ${bmi} (${category})</p>
+                <p><strong>Recommended Steps:</strong> ${steps}</p>
+                <p><strong>Diet Plan:</strong> ${diet}</p>
+            `;
+
+            // Store video IDs for different platforms
+            document.getElementById("exerciseContainer").dataset.youtube = videoID;
+            document.getElementById("exerciseContainer").dataset.vimeo = vimeoID;
+            document.getElementById("exerciseContainer").dataset.dailymotion = dailyID;
+
+            document.getElementById("exerciseSuggestion").innerText = workout;
+            document.getElementById("exerciseContainer").style.display = "block";
+            updateVideo();
+        }
+
+        function updateVideo() {
+            const platform = document.getElementById("platform").value;
+            const container = document.getElementById("exerciseContainer");
+            const iframe = document.getElementById("exerciseVideo");
+            let videoID = "";
+
+            if (platform === "youtube") {
+                videoID = container.dataset.youtube;
+                iframe.src = `https://www.youtube.com/embed/${videoID}`;
+            } else if (platform === "vimeo") {
+                videoID = container.dataset.vimeo;
+                iframe.src = `https://player.vimeo.com/video/${videoID}`;
+            } else if (platform === "dailymotion") {
+                videoID = container.dataset.dailymotion;
+                iframe.src = `https://www.dailymotion.com/embed/video/${videoID}`;
+            }
+        }
+    </script>
+</body>
+</html>
